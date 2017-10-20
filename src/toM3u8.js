@@ -8,6 +8,7 @@ export const formatAudioPlaylist = ({ attributes, segments }) => {
     },
     uri: '',
     endList: true,
+    mediaSequence: 0,
     timeline: attributes.periodIndex,
     resolvedUri: '',
     segments
@@ -22,6 +23,7 @@ export const formatVttPlaylist = ({ attributes, segments }) => {
       ['PROGRAM-ID']: 1
     },
     uri: '',
+    mediaSequence: 0,
     endList: true,
     timeline: attributes.periodIndex,
     resolvedUri: attributes.url || '',
@@ -96,6 +98,7 @@ export const formatVideoPlaylist = ({ attributes, segments }) => {
     },
     uri: '',
     endList: true,
+    mediaSequence: 0,
     timeline: attributes.periodIndex,
     resolvedUri: '',
     segments
