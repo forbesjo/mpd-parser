@@ -26,8 +26,13 @@ export const formatVttPlaylist = ({ attributes, segments }) => {
     mediaSequence: 0,
     endList: true,
     timeline: attributes.periodIndex,
-    resolvedUri: attributes.url || '',
-    segments
+    resolvedUri: '',
+    segments: [{
+      uri: attributes.url,
+      timeline: attributes.periodIndex,
+      duration: attributes.sourceDuration,
+      resolvedUri: attributes.url
+    }]
   };
 };
 
@@ -145,7 +150,7 @@ export const toM3u8 = dashPlaylists => {
   }
 
   if (vttPlaylists.length) {
-    master.mediaGroups.SUBTITLES.subs = organizeVttPlaylists(vttPlaylists);
+    master.mediaGroups.SUBTITLES.main = organizeVttPlaylists(vttPlaylists);
   }
 
   return master;
