@@ -1,6 +1,8 @@
 import { shallowMerge, getAttributes } from '../src/utils/object';
 import { parseDuration } from '../src/utils/time';
-import { flatten, range } from '../src/utils/list';
+import { flatten, range, from } from '../src/utils/list';
+import { findChildren, getContent } from '../src/utils/xml';
+import window from 'global/window';
 import document from 'global/document';
 import QUnit from 'qunit';
 
@@ -86,18 +88,65 @@ QUnit.test('invalid', function(assert) {
 });
 
 QUnit.module('range');
-QUnit.test('default start number of 0', function(assert) {
-  assert.deepEqual(range(3), [0, 1, 2]);
+QUnit.test('simple', function(assert) {
+  assert.deepEqual(range(1, 4), [1, 2, 3]);
 });
 
-QUnit.test('start number', function(assert) {
-  assert.deepEqual(range(3, 1), [1, 2, 3]);
+QUnit.test('single number range', function(assert) {
+  assert.deepEqual(range(1, 1), []);
 });
 
-QUnit.test('count of 0', function(assert) {
-  assert.deepEqual(range(0), []);
+QUnit.test('negative', function(assert) {
+  assert.deepEqual(range(-1, 2), [-1, 0, 1]);
 });
 
-QUnit.test('negative count', function(assert) {
-  assert.deepEqual(range(-1), []);
+QUnit.module('from');
+
+QUnit.test('simple array', function(assert) {
+  assert.deepEqual(from([1]), [1]);
+});
+
+QUnit.test('empty array', function(assert) {
+  assert.deepEqual(from([]), []);
+});
+
+QUnit.test('non-array', function(assert) {
+  assert.deepEqual(from(1), []);
+});
+
+QUnit.test('array-like', function(assert) {
+  const fixture = document.createElement('div');
+
+  fixture.innerHTML = '<div></div><div></div>';
+
+  const result = from(fixture.getElementsByTagName('div'));
+
+  assert.ok(result.map);
+  assert.deepEqual(result.length, 2);
+});
+
+QUnit.module('xml', {
+  beforeEach() {
+    const parser = new window.DOMParser();
+    const xmlString = `
+    <fix>
+      <test>foo </test>
+      <div>bar</div>
+      <div>baz</div>
+    </fix>`;
+
+    this.fixture = parser.parseFromString(xmlString, 'text/xml').documentElement;
+  }
+});
+
+QUnit.test('findChildren', function(assert) {
+  assert.deepEqual(findChildren(this.fixture, 'test').length, 1, 'single');
+  assert.deepEqual(findChildren(this.fixture, 'div').length, 2, 'multiple');
+  assert.deepEqual(findChildren(this.fixture, 'el').length, 0, 'none');
+});
+
+QUnit.test('getContent', function(assert) {
+  const result = findChildren(this.fixture, 'test')[0];
+
+  assert.deepEqual(getContent(result), 'foo', 'gets text and trims');
 });
