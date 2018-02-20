@@ -15,6 +15,15 @@ export const formatAudioPlaylist = ({ attributes, segments }) => {
 };
 
 export const formatVttPlaylist = ({ attributes, segments }) => {
+  if (typeof segments === 'undefined') {
+    // vtt tracks may use single file in BaseURL
+    segments = [{
+      uri: attributes.baseUrl,
+      timeline: attributes.periodIndex,
+      resolvedUri: attributes.baseUrl || '',
+      duration: attributes.sourceDuration
+    }];
+  }
   return {
     attributes: {
       NAME: attributes.id,
@@ -24,7 +33,7 @@ export const formatVttPlaylist = ({ attributes, segments }) => {
     uri: '',
     endList: true,
     timeline: attributes.periodIndex,
-    resolvedUri: attributes.url || '',
+    resolvedUri: attributes.baseUrl || '',
     segments
   };
 };
@@ -86,6 +95,7 @@ export const formatVideoPlaylist = ({ attributes, segments }) => {
     attributes: {
       NAME: attributes.id,
       AUDIO: 'audio',
+      SUBTITLES: 'subs',
       RESOLUTION: {
         width: parseInt(attributes.width, 10),
         height: parseInt(attributes.height, 10)
