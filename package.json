@@ -17,7 +17,9 @@
     "docs": "run-p docs:*",
     "docs:api": "jsdoc src -r -d docs/api",
     "docs:toc": "doctoc README.md",
-    "lint": "vjsstandard",
+    "ts": "tsc",
+    "vjsstandard": "vjsstandard",
+    "lint": "run-s vjsstandard ts",
     "prestart": "npm run build",
     "start": "run-p start:server test:server watch:js",
     "start:server": "static -a 0.0.0.0 -p 9999 -H '{\"Cache-Control\": \"no-cache, must-revalidate\"}' .",
@@ -80,6 +82,7 @@
     "rollup-watch": "^3.2.2",
     "semver": "^5.3.0",
     "sinon": "^4.1.2",
+    "typescript": "^2.7.2",
     "uglify-es": "^3.2.1",
     "videojs-standard": "^6.0.0"
   },
